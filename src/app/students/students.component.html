@@ -1,0 +1,139 @@
+<div class="row">
+    <div class="col-3">
+      <app-sidebar></app-sidebar>
+    </div>
+    <div class="col-9">
+      <h1 class="m-5">All Students</h1>
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-6">
+            <input type="text" class="form-control" placeholder="Search">
+          </div>
+          <div class="col-4">
+            <button class="btn btn-success" (click)="add()" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Student</button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Table displaying all students -->
+      <table class="table mt-4">
+        <thead>
+          <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Course</th>
+            <th scope="col">Grade</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let student of paginatedStudents ">
+            <td>{{student._id}}</td>
+            <td>{{student.name}}</td>
+            <td>{{student.email}}</td>
+            <td>{{student.course}}</td>
+            <td>{{student.grade}}</td>
+            <td>
+              <button class="btn btn-info" (click)="update(student)" data-bs-toggle="modal" data-bs-target="#exampleModal">Edit</button>&nbsp;
+              <button class="btn btn-danger" (click)="confirmDelete(student._id)">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+
+      <div class="d-flex justify-content-center align-items-center mt-4">
+        <button class="btn btn-secondary me-2" (click)="prevPage()" [disabled]="currentPage === 1">
+          Previous
+        </button>
+        <span>Page {{ currentPage }} of {{ totalPages }}</span>
+        <button class="btn btn-secondary ms-2" (click)="nextPage()" [disabled]="(currentPage * pageSize) >= students.length">
+          Next
+        </button>
+      </div>
+
+  
+      <!-- Modal for Add/Update Student -->
+      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            
+            <div style="background-color: rgb(75, 128, 75);" class="modal-header">
+              <h1 style="color: bisque; font-size: 20px; font-weight: 620; margin-left: 72px;" class="modal-title fs-5" id="exampleModalLabel">Student Management System</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+      
+            <div class="modal-body">
+              <form [formGroup]="formValue" novalidate>
+                
+                <div class="form-group mb-3">
+                  <label for="name" class="form-label">Name</label>
+                  <input type="text" formControlName="name" class="form-control" [ngClass]="{'is-invalid': formValue.get('name')?.invalid && formValue.get('name')?.touched}" id="name" placeholder="Enter Student's Name">
+                  <div class="invalid-feedback" *ngIf="formValue.get('name')?.errors?.['required']">
+                    Name is required.
+                  </div>
+                  <div class="invalid-feedback" *ngIf="formValue.get('name')?.errors?.['pattern']">
+                    Name must contain only letters.
+                  </div>
+                </div>
+      
+                <div class="form-group mb-3">
+                  <label for="email" class="form-label">Email address</label>
+                  <input type="email" formControlName="email" class="form-control" [ngClass]="{'is-invalid': formValue.get('email')?.invalid && formValue.get('email')?.touched}" id="email" placeholder="Enter Mail Address">
+                  <div class="invalid-feedback" *ngIf="formValue.get('email')?.errors?.['required']">
+                    Email is required.
+                  </div>
+                  <div class="invalid-feedback" *ngIf="formValue.get('email')?.errors?.['email']">
+                    Enter a valid email.
+                  </div>
+                </div>
+      
+                <div class="form-group mb-3">
+                  <label for="course" class="form-label">Course</label>
+                  <input type="text" formControlName="course" class="form-control" [ngClass]="{'is-invalid': formValue.get('course')?.invalid && formValue.get('course')?.touched}" id="course" placeholder="Enter Course">
+                  <div class="invalid-feedback" *ngIf="formValue.get('course')?.errors?.['required']">
+                    Course is required.
+                  </div>
+                  <div class="invalid-feedback" *ngIf="formValue.get('course')?.errors?.['pattern']">
+                    Course must contain only letters.
+                  </div>
+                </div>
+      
+                <div class="form-group mb-3">
+                  <label for="grade" class="form-label">Grade</label>
+                  <input type="text" formControlName="grade" class="form-control" [ngClass]="{'is-invalid': formValue.get('grade')?.invalid && formValue.get('grade')?.touched}" id="grade" placeholder="Enter Grade">
+                  <div class="invalid-feedback" *ngIf="formValue.get('grade')?.errors?.['required']">
+                    Grade is required.
+                  </div>
+                  <div class="invalid-feedback" *ngIf="formValue.get('grade')?.errors?.['pattern']">
+                    Grade must be alphanumeric only.
+                  </div>
+                </div>
+      
+              </form>
+            </div>
+
+          
+            <div *ngIf="showSuccessMessage" class="text-center text-green-500">
+                <p class="text-xl font-semibold">Student added successfully!</p>
+                <button type="button" class="m-2 py-2 px-3 text-xs text-white bg-blue-600 hover:bg-blue-700 rounded" (click)="closeModal()">Close</button>
+              </div>
+
+              <div *ngIf="showErrorMessage" class="text-center text-red-500">
+                <p class="text-sm">Error while adding student!</p>
+                <button type="button" class="mt-2 py-1 px-2 text-xs text-white bg-red-600 hover:bg-red-700 rounded text-sm" (click)="closeModal()">Close</button>
+              </div>
+      
+            <div style="background-color:rgb(75, 128, 75);" class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button *ngIf="showadd" type="button" class="btn btn-primary" (click)="addStudent()">Add</button>
+              <button *ngIf="showupdate" type="button" class="btn btn-primary" (click)="updateStudent()">Update</button>
+            </div>
+      
+          </div>
+        </div>
+      
+    </div>
+  </div>
+  

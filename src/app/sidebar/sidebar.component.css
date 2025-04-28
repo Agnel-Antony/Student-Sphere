@@ -1,0 +1,30 @@
+.side{
+    width: 300px;
+    min-height: 100vh;
+    background-color: rgb(75, 146, 75);
+    color: blanchedalmond;
+}
+
+.admin{
+    background-color: rgb(40, 77, 40);
+}
+
+li{
+    margin-right: 25px;
+    margin-top: 20px;
+    border: 1px solid;
+    padding: 20px;
+    text-align: center;
+    border-radius: 10px;
+}
+
+li a{
+    text-decoration: none;
+    color: bisque;
+}
+
+li:hover{
+    border:none;
+    background-color: rgb(40, 77, 40);
+    transition: 1s;
+}
